@@ -404,6 +404,23 @@ TEST_CASE("MQ_flag_without_immediate_argument_should_not_add_MQobj")
         == "gcc -c -MD -MP -MFfoo.d -MQ foo.d");
 }
 
+TEST_CASE("object_dir_flag_without_object_arg_should_get_output_object_base_on_srs_file_and_object_dir")
+{
+  TestContext test_context;
+  Context ctx;
+  ctx.orig_args = Args::from_string("ccpc.exe -c -MD -MP -MFfoo.d -MQ foo.d -object_dir=obj foo.c");
+  util::write_file("foo.c", "");
+
+  const ProcessArgsResult result = process_args(ctx);
+
+  CHECK(!result.error);
+  CHECK(ctx.args_info.output_obj_dir == "obj");
+  CHECK(ctx.args_info.output_obj == "obj\\foo.o");
+  CHECK(result.preprocessor_args.to_string() == "ccpc.exe");
+  CHECK(result.compiler_args.to_string()
+        == "ccpc.exe -c -MD -MP -MFfoo.d -MQ foo.d");
+}
+
 TEST_CASE("MT_flag_without_immediate_argument_should_not_add_MTobj")
 {
   TestContext test_context;

@@ -48,6 +48,9 @@ struct ArgsInfo
   // The output file being compiled to, potentially rewritten into relative.
   std::string output_obj;
 
+  // The path to the directory with object files. 
+  std::string output_obj_dir;
+
   // The path to the dependency file (implicit or specified with -MFdepfile,
   // -Wp,-MD,depfile or -Wp,-MMD,depfile).
   std::string output_dep;

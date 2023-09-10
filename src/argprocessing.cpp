@@ -560,6 +560,12 @@ process_option_arg(const Context& ctx,
   }
 
   // We need to work out where the output was meant to go.
+  if (util::starts_with(arg, "-object_dir=")) {
+    args_info.output_obj_dir = arg.substr(arg.find('=') + 1);
+    return Statistic::none;
+  }
+
+  // We need to work out where the output was meant to go.
   if (arg == "-o") {
     if (i == args.size() - 1) {
       LOG("Missing argument to {}", args[i]);
@@ -1221,8 +1227,13 @@ process_args(Context& ctx)
   if (output_obj_by_source && !args_info.input_file.empty()) {
     std::string_view extension =
       state.found_S_opt ? ".s" : get_default_object_file_extension(ctx.config);
-    args_info.output_obj +=
-      Util::change_extension(Util::base_name(args_info.input_file), extension);
+    if (!args_info.output_obj_dir.empty()) {
+      args_info.output_obj = args_info.output_obj_dir + "\\" + 
+        Util::change_extension(Util::base_name(args_info.input_file), extension);
+    } else {
+      args_info.output_obj +=
+        Util::change_extension(Util::base_name(args_info.input_file), extension);
+    }
   }
 
   args_info.orig_output_obj = args_info.output_obj;
